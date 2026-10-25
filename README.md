@@ -1,19 +1,16 @@
-# desafio-medusa
-Documentação de testes de força bruta com Medusa em ambiente controlado
-
-# Laboratório de Testes de Força Bruta e Avaliação de Credenciais com Medusa
+# Laboratório de Testes de Força Bruta com Medusa (FTP e SMB)
 
 ## 📌 Visão Geral
-Este repositório documenta a execução de testes de segurança defensiva e ofensiva simulando ataques de dicionário e força bruta (*brute-force*) utilizando a ferramenta **Medusa** contra serviços vulneráveis na máquina **Metasploitable 2**, em um ambiente virtualizado totalmente isolado e controlado.
+Este repositório documenta a execução de testes de intrusão e avaliação de segurança ofensiva focados em ataques de dicionário e força bruta (*brute-force*). Utilizando a ferramenta **Medusa**, foram auditados os serviços vulneráveis de **FTP** e **SMB** na máquina **Metasploitable 2** em um ambiente virtualizado totalmente isolado.
 
 ---
 
 ## 🛠️ Arquitetura da Rede e Laboratório
-O ambiente foi configurado com uma topologia de dupla interface para garantir a isolamento total do laboratório de testes em relação ao tráfego externo, mantendo acesso à internet apenas para atualização de ferramentas e documentação.
+O ambiente foi configurado com uma topologia de dupla interface de rede no Kali Linux, garantindo isolamento total dos testes defensivos e mantendo conectividade externa para gerenciamento do repositório.
 
 * **Máquina Atacante (Kali Linux):**
   * `eth0`: IP Estático `192.168.10.1/24` (Rede Interna / Host-Only — Isolada para o Lab)
-  * `eth1`: IP via DHCP (NAT — Conexão com a Internet via VirtualBox)
+  * `eth1`: IP via DHCP (NAT — Acesso à Internet para atualização e Git)
 * **Máquina Alvo (Metasploitable 2):**
   * `eth0`: IP Estático `192.168.10.2/24` (Rede Interna / Host-Only)
 
@@ -22,26 +19,25 @@ O ambiente foi configurado com uma topologia de dupla interface para garantir a 
 ## 🎯 Serviços Auditados e Comandos Executados
 
 ### 1. Teste de Força Bruta no Serviço FTP (Porta 21)
-Execução de teste de dicionário para validação de credenciais de acesso ao serviço de transferência de arquivos:
+Validação de credenciais e resistência contra ataques de dicionário no serviço de transferência de arquivos:
 
-\`\`\`bash
+```bash
 medusa -h 192.168.10.2 -u msfadmin -P /usr/share/wordlists/rockyou.txt -M ftp
-\`\`\`
+2. Teste de Autenticação no Serviço SMB (Porta 445)
 
-### 2. Teste de Autenticação no Serviço SSH (Porta 22)
-Auditoria de robustez de senhas para acesso shell remoto:
+Auditoria de robustez de senhas no serviço de compartilhamento de arquivos e recursos de rede:
+Bash
 
-\`\`\`bash
-medusa -h 192.168.10.2 -U usuarios.txt -P senhas.txt -M ssh
-\`\`\`
+medusa -h 192.168.10.2 -u msfadmin -P /usr/share/wordlists/rockyou.txt -M smb
 
----
+🛡️ Medidas de Mitigação e Recomendações
 
-## 🛡️ Medidas de Mitigação e Recomendações
-Para prevenir e mitigar vetores de ataque por força bruta, recomendam-se as seguintes boas práticas:
+Para proteger os serviços FTP e SMB contra ataques de autenticação automatizados, recomendam-se as seguintes medidas defensivas:
 
-1. **Política de Senhas Fortes:** Exigir complexidade mínima, comprimento elevado e rotação periódica.
-2. **Bloqueio de Contas (*Account Lockout*):** Configurar limite de tentativas incorretas consecutivas.
-3. **Autenticação Multi-Fator (MFA):** Implementar MFA obrigatório para serviços expostos.
-4. **Proteção de Camada de Rede:** Utilizar ferramentas como `Fail2ban` para banir IPs temporariamente e configurar regras de firewall restritivas.
-5. **Monitoramento e Logs:** Centralizar logs em soluções SIEM para detecção de anomalias em tempo real.
+    Política de Senhas Fortes: Exigir alta complexidade de caracteres e comprimento elevado.
+
+    Bloqueio de Contas (Account Lockout): Restringir tentativas incorretas consecutivas para mitigar ataques automatizados.
+
+    Restrição de Acesso de Rede: Utilizar regras de firewall para limitar o acesso às portas 21 e 445 apenas a IPs autorizados.
+
+    Monitoramento e Logs: Implementar soluções de detecção de anomalias (SIEM/IDS) para alertar sobre múltiplas falhas de autenticação.
